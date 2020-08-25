@@ -74,7 +74,7 @@ export const pipeLineProperties: PipelineDefiniton = {
     
     environments: {
       pipeline: {
-        account: "188358290424",
+        account: "1234561111",
         region: "ap-south-1"
       },
       dev: {
@@ -82,11 +82,11 @@ export const pipeLineProperties: PipelineDefiniton = {
         region: "ap-south-1"
       },
       test: {
-        account: "188358290424",
+        account: "1258974545",
         region: "ap-south-1"
       },
       production: {
-        account: "188358290424",
+        account: "7979797979",
         region: "ap-south-1"
       }
     },
