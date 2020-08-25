@@ -1,0 +1,3 @@
+[submodule "GobasktCdkCommon"]
+	path = GobasktCdkCommon
+	url = https://github.com/srnyapathi/GobasktCdkCommon.git
