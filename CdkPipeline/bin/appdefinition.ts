@@ -34,7 +34,7 @@ export const pipeLineProperties: PipelineDefiniton = {
   gitConfiguration: {
     username: "EktaKesharwaniGobaskt",
     repository: "cdk-api-pipeline",
-    secretName: "TEST",
+    secretName: "a97ad1bcc031f67b378e6ec5e138510fa07b5389",
   },
 };
 
@@ -45,6 +45,7 @@ export const applicationProperties: RestApiDefinition = {
     type: EndpointType.EDGE,
     authorizerName: "MerchantUserPool",
     cognitoUserPoolSecret: undefined,
+    
   resources: [
     {
       id: 0,

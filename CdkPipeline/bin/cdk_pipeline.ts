@@ -12,7 +12,7 @@ new GobasktApiStack(app,applicationProperties.stackName,{apiProps: applicationPr
 
 new PipelineStack(app, 'PipelineStack', {
     
-    githubToken: "690d829ade9e82a28ab83991092407a533d4f493",
+    githubToken: "a97ad1bcc031f67b378e6ec5e138510fa07b5389",
     env: {
       region: "ap-south-1",
     }

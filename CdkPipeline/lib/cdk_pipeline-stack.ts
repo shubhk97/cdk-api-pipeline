@@ -26,7 +26,7 @@ export class TestApplicationPipeline extends Stack {
         
         actionName: "GitHub",
         output: sourceArtifact,
-        oauthToken: SecretValue.secretsManager(props.pipelineProps.gitConfiguration.secretName),
+        oauthToken: SecretValue.plainText(props.pipelineProps.gitConfiguration.secretName),
         trigger: codepipeline_actions.GitHubTrigger.WEBHOOK,
         owner: props.pipelineProps.gitConfiguration.username,
         repo: props.pipelineProps.gitConfiguration.repository,
