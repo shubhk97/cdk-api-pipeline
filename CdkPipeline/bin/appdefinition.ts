@@ -15,7 +15,7 @@ export const pipeLineProperties: PipelineDefiniton = {
 
   environments: {
     pipeline: {
-      account: "188358290424",
+      account: "777595641779",
       region: "ap-south-1",
     },
     dev: {
@@ -32,8 +32,8 @@ export const pipeLineProperties: PipelineDefiniton = {
     },
   },
   gitConfiguration: {
-    username: "srnyapathi",
-    repository: "CdkPipeline",
+    username: "EktaKesharwaniGobaskt",
+    repository: "cdk-api-pipeline",
     secretName: "TEST",
   },
 };
