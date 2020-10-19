@@ -1,6 +1,6 @@
 import * as cdk from "@aws-cdk/core";
 import * as apigateway from "@aws-cdk/aws-apigateway";
-import { Resource, IResource, SecretValue, Fn } from "@aws-cdk/core";
+import { Fn } from "@aws-cdk/core";
 import { Z_PARTIAL_FLUSH } from "zlib";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as path from "path";
@@ -8,7 +8,7 @@ import * as iam from "@aws-cdk/aws-iam";
 
 import {
   CfnMethod,
-  Method,
+  Method
 } from "@aws-cdk/aws-apigateway";
 import * as gobaskt from "./GobasktTemplateTypes";
 
@@ -26,13 +26,14 @@ export class GobasktApiStack extends cdk.Stack {
 
     const apigw = new apigateway.RestApi(this, props.apiProps.apiName, {
       restApiName: props?.apiProps.apiName,
-      endpointTypes: [apigateway.EndpointType.EDGE],
+      endpointTypes: [apigateway.EndpointType.EDGE]
+      
     });
     this.api = apigw;
 
     let resources: apigateway.Resource[] = [];
 
-    if (props.apiProps.authorizerName !== undefined && props.apiProps.cognitoUserPoolSecret!==undefined) {
+    if (props.apiProps.authorizerName !== undefined) {
       this.setApiAuthorizer(
         props.apiProps.authorizerName,
         props.stageName
@@ -75,6 +76,42 @@ export class GobasktApiStack extends cdk.Stack {
               this.getMethodOptions(methodDefinition)
             );
 
+            node.addMethod(
+              "OPTIONS",
+              new apigateway.MockIntegration({
+                integrationResponses:[
+                  {
+                    statusCode:"200",
+                    responseParameters:{
+                      "method.response.header.Access-Control-Allow-Headers":"'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                      "method.response.header.Access-Control-Allow-Methods":"'GET,POST,OPTIONS'",
+                      "method.response.header.Access-Control-Allow-Origin":"'*'"
+                    },
+                    responseTemplates:{
+                      "application/json":""
+                    },
+                    
+                  }
+                ],
+                
+                passthroughBehavior:apigateway.PassthroughBehavior.WHEN_NO_TEMPLATES,
+                requestTemplates:{"application/json": "{\"statusCode\": 200}"},
+                
+                
+              }),
+              {
+                methodResponses:[{
+                  statusCode:"200",
+                  responseParameters:{
+                    "method.response.header.Access-Control-Allow-Headers":true,
+                    "method.response.header.Access-Control-Allow-Methods":true,
+                    "method.response.header.Access-Control-Allow-Origin":true
+                  },
+                }]
+              }
+
+            )
+
             if (methodDefinition.secured === true) {
               this.setMethodAuthorizer(method);
             }
@@ -98,7 +135,7 @@ export class GobasktApiStack extends cdk.Stack {
       name: authorizerName,
       type: "COGNITO_USER_POOLS",
       identitySource: "method.request.header.Authorization",
-      providerArns:[ Fn.importValue(stageName+"-"+"MerchantCognitoUserPool"+"PoolId")]
+      providerArns:["arn:aws:cognito-idp:ap-south-1:777595641779:userpool/ap-south-1_4tVvPHwBz"]
     });
     
   };

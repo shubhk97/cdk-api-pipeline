@@ -27,6 +27,9 @@ export class GobasktApiStack extends cdk.Stack {
     const apigw = new apigateway.RestApi(this, props.apiProps.apiName, {
       restApiName: props?.apiProps.apiName,
       endpointTypes: [apigateway.EndpointType.EDGE],
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS
+      }
     });
     this.api = apigw;
 
@@ -68,12 +71,42 @@ export class GobasktApiStack extends cdk.Stack {
               methodDefinition.readAccessOnTabels,
               methodDefinition.writeAccessOnTables
             );
-
-            const method = node.addMethod(
-              methodDefinition.method,
-              this.getIntegration(methodDefinition, lambda),
-              this.getMethodOptions(methodDefinition)
-            );
+              var method=null;
+            if(methodDefinition.method==="OPTIONS"){
+              method = node.addMethod('OPTIONS', new apigateway.MockIntegration({
+                integrationResponses: [{
+                statusCode: '200',
+                responseParameters: {
+                    'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                    'method.response.header.Access-Control-Allow-Origin': "'*'",
+                    'method.response.header.Access-Control-Allow-Credentials': "'false'",
+                    'method.response.header.Access-Control-Allow-Methods': "'OPTIONS,GET,PUT,POST,DELETE'",
+                },
+                }],
+                passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
+                requestTemplates: {
+                "application/json": "{\"statusCode\": 200}"
+                },
+            }), {
+                methodResponses: [{
+                statusCode: '200',
+                responseParameters: {
+                    'method.response.header.Access-Control-Allow-Headers': true,
+                    'method.response.header.Access-Control-Allow-Methods': true,
+                    'method.response.header.Access-Control-Allow-Credentials': true,
+                    'method.response.header.Access-Control-Allow-Origin': true,
+                },  
+                }]
+            })
+            }
+            else{
+              method = node.addMethod(
+                methodDefinition.method,
+                this.getIntegration(methodDefinition, lambda),
+                this.getMethodOptions(methodDefinition)
+              );
+            }
+            
 
             if (methodDefinition.secured === true) {
               this.setMethodAuthorizer(method);
