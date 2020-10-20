@@ -12,6 +12,7 @@ export interface PipelineStackProps extends StackProps {
 export class PipelineStack extends Stack {
   constructor(app: App, id: string, props: PipelineStackProps) {
     super(app, id, props);
+
     const cdkBuild = new codebuild.PipelineProject(this, 'CdkBuild', {
       buildSpec: codebuild.BuildSpec.fromObject({
         version: '0.2',
@@ -57,7 +58,7 @@ export class PipelineStack extends Stack {
         //   }
         // },
         artifacts: {
-          "base-directory": "CdkPipeline/src/lambda/CDK-Test-GroupPlanAPI-groupPlan-POST-py",
+          "base-directory": "CdkPipeline/src/lambda",
           files: [
             // "build/**/*",
             // "node_modules/**/*",
