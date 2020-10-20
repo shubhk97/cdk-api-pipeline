@@ -59,12 +59,12 @@ export class PipelineStack extends Stack {
         //   }
         // },
         artifacts: {
-          "base-directory": "CdkPipeline/src/lambda",
+          "base-directory": "CdkPipeline/src/lambda/CDK-Test-GroupPlanAPI-groupPlan-POST-py",
           files: [
             // "build/**/*",
             // "node_modules/**/*",
             // "@types"
-            "CDK-Test-GroupPlanAPI-groupPlan-POST-py/*"
+            "/*"
           ]
         }
       }),
