@@ -10,6 +10,7 @@ import * as lambda from '@aws-cdk/aws-lambda';
 
 const app = new cdk.App();
 const lambdaStack = new GobasktApiStack(app,applicationProperties.stackName,{apiProps: applicationProperties});
+
 new PipelineStack(app, 'PipelineStack', {
     lambdaCode: lambdaStack.lambdaCode,
     githubToken: "",
