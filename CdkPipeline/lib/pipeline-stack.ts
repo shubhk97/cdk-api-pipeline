@@ -12,8 +12,6 @@ export interface PipelineStackProps extends StackProps {
 export class PipelineStack extends Stack {
   constructor(app: App, id: string, props: PipelineStackProps) {
     super(app, id, props);
-
-    // Build CDK
     const cdkBuild = new codebuild.PipelineProject(this, 'CdkBuild', {
       buildSpec: codebuild.BuildSpec.fromObject({
         version: '0.2',
