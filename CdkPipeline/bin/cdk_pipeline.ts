@@ -13,7 +13,7 @@ const lambdaStack = new GobasktApiStack(app,applicationProperties.stackName,{api
 const lambdaCode = lambda.Code.fromCfnParameters();
 new PipelineStack(app, 'PipelineStack', {
     lambdaCode: lambdaStack.lambdaCode,
-    githubToken: "6cf650c4a058fd53f8f655fa94546a799409bc19",
+    githubToken: "",
     env: {
       region: "ap-south-1",
     }
