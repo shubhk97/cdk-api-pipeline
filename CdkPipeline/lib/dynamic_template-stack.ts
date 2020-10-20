@@ -19,11 +19,11 @@ import { gobasktProps } from "./GobasktTemplateTypes";
 
 export class GobasktApiStack extends cdk.Stack {
   api: apigateway.RestApi;
-
+  public readonly lambdaCode: lambda.CfnParametersCode;
   apiAuthorizer: apigateway.CfnAuthorizer;
   constructor(scope: cdk.Construct, id: string, props: gobasktProps) {
     super(scope, id, props);
-
+    this.lambdaCode = lambda.Code.fromCfnParameters();
     const apigw = new apigateway.RestApi(this, props.apiProps.apiName, {
       restApiName: props?.apiProps.apiName,
       endpointTypes: [apigateway.EndpointType.EDGE]

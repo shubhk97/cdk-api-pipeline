@@ -5,7 +5,7 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import { App, Stack, StackProps, SecretValue } from '@aws-cdk/core';
 
 export interface PipelineStackProps extends StackProps {
-  //readonly lambdaCode: lambda.CfnParametersCode;
+  readonly lambdaCode: lambda.CfnParametersCode;
   readonly githubToken: string;
 }
 
@@ -20,6 +20,7 @@ export class PipelineStack extends Stack {
         phases: {
           install: {
             commands: [
+              'cd CdkPipeline',
               'npm install'
             ],
           },
@@ -31,7 +32,7 @@ export class PipelineStack extends Stack {
           },
         },
         artifacts: {
-          'base-directory': 'dist',
+          'base-directory': 'CdkPipeline/dist',
           files: [
             'GroupPlanCDKTest.template.json',
           ],
@@ -58,7 +59,7 @@ export class PipelineStack extends Stack {
         //   }
         // },
         artifacts: {
-          "base-directory": "src/lambda",
+          "base-directory": "CdkPipeline/src/lambda",
           files: [
             // "build/**/*",
             // "node_modules/**/*",
@@ -87,7 +88,7 @@ export class PipelineStack extends Stack {
             new codepipeline_actions.GitHubSourceAction({
               actionName: 'Checkout',
               output: sourceOutput,
-              owner: "EktaKesharwaniGobaskt",
+              owner: "shubhk97",
               repo: "cdk-api-pipeline",
               oauthToken: SecretValue.plainText(props.githubToken),
               trigger: codepipeline_actions.GitHubTrigger.WEBHOOK,
@@ -119,7 +120,9 @@ export class PipelineStack extends Stack {
               templatePath: cdkBuildOutput.atPath('GroupPlanCDKTest.template.json'),
               stackName: 'LambdaDeploymentStack',
               adminPermissions: true,
-              
+              parameterOverrides: {
+                ...props.lambdaCode.assign(lambdaBuildOutput.s3Location)
+              },
               extraInputs: [lambdaBuildOutput],
             }),
           ],

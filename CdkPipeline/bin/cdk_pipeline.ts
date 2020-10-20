@@ -6,13 +6,14 @@ import { PipelineProject } from '@aws-cdk/aws-codebuild';
 import { applicationProperties, pipeLineProperties} from '../bin/appdefinition';
 import { GobasktApiStack } from '../lib/dynamic_template-stack';
 import { PipelineStack } from '../lib/pipeline-stack';
+import * as lambda from '@aws-cdk/aws-lambda';
 
 const app = new cdk.App();
-new GobasktApiStack(app,applicationProperties.stackName,{apiProps: applicationProperties});
-
+const lambdaStack = new GobasktApiStack(app,applicationProperties.stackName,{apiProps: applicationProperties});
+const lambdaCode = lambda.Code.fromCfnParameters();
 new PipelineStack(app, 'PipelineStack', {
-    
-    githubToken: "a97ad1bcc031f67b378e6ec5e138510fa07b5389",
+    lambdaCode: lambdaStack.lambdaCode,
+    githubToken: "",
     env: {
       region: "ap-south-1",
     }
