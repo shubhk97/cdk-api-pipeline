@@ -150,7 +150,9 @@ export class GobasktApiStack extends cdk.Stack {
       functionName: functionName,
       runtime: runtime,
       handler: handler,
-      code: this.lambdaCode
+      code: lambda.Code.fromAsset(
+        path.join(__dirname, "../src/lambda/", folderName)
+      )
     });
   };
 

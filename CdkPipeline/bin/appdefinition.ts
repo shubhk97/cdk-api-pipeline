@@ -32,9 +32,9 @@ export const pipeLineProperties: PipelineDefiniton = {
     },
   },
   gitConfiguration: {
-    username: "EktaKesharwaniGobaskt",
+    username: "shubhk97",
     repository: "cdk-api-pipeline",
-    secretName: "a97ad1bcc031f67b378e6ec5e138510fa07b5389",
+    secretName: "",
   },
 };
 
