@@ -10,22 +10,22 @@ import * as lambda from '@aws-cdk/aws-lambda';
 
 const app = new cdk.App();
 const lambdaStack = new GobasktApiStack(app,applicationProperties.stackName,{apiProps: applicationProperties});
-// new PipelineStack(app, 'PipelineStack', {
-//     lambdaCode: lambdaStack.lambdaCode,
-//     githubToken: "2ee693b0865f48e221f9fb0079937e0f319ed1bb",
-//     env: {
-//       region: "ap-south-1",
-//     }
-//   });
-
-//   app.synth()
-new TestApplicationPipeline(app, pipeLineProperties.pipelineName,{
+new PipelineStack(app, 'PipelineStack', {
+    lambdaCode: lambdaStack.lambdaCode,
+    githubToken: "",
     env: {
-      account: pipeLineProperties.environments.pipeline.account,
-      region: pipeLineProperties.environments.pipeline.region,
-    },
-    pipelineProps:pipeLineProperties,
-    applicationProps:{
-      apiProps: applicationProperties
+      region: "ap-south-1",
     }
   });
+
+  app.synth()
+// new TestApplicationPipeline(app, pipeLineProperties.pipelineName,{
+//     env: {
+//       account: pipeLineProperties.environments.pipeline.account,
+//       region: pipeLineProperties.environments.pipeline.region,
+//     },
+//     pipelineProps:pipeLineProperties,
+//     applicationProps:{
+//       apiProps: applicationProperties
+//     }
+//   });
