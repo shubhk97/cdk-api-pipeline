@@ -38,6 +38,7 @@ export interface ResourceDefinition{
 }
 
 export interface MethodDefinition{
+    id: number,
     functionName:string,
     description?:string,
     method:string,

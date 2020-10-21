@@ -3,9 +3,11 @@ import * as codepipeline from '@aws-cdk/aws-codepipeline';
 import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
 import * as lambda from '@aws-cdk/aws-lambda';
 import { App, Stack, StackProps, SecretValue } from '@aws-cdk/core';
+import { RestApiDefinition } from '../GobasktCdkCommon/GobasktTemplateTypes';
 
 export interface PipelineStackProps extends StackProps {
-  readonly lambdaCode: lambda.CfnParametersCode;
+  readonly lambdaCode: lambda.CfnParametersCode[];
+  readonly apiProps: RestApiDefinition;
   readonly githubToken: string;
 }
 
@@ -43,39 +45,47 @@ export class PipelineStack extends Stack {
     });
 
     // Build Lambda
-    const lambdaBuild = new codebuild.PipelineProject(this, "LambdaBuild", {
-      buildSpec: codebuild.BuildSpec.fromObject({
-        version: "0.2",
-        // phases: {
-        //   install: {
-        //     commands: [
-        //       'cd lambda',
-        //       "npm i"
-        //     ]
-        //   },
-        //   build: {
-        //     commands: "npm run build"
-        //   }
-        // },
-        artifacts: {
-          "base-directory": "CdkPipeline/src/lambda",
-          files: [
-            // "build/**/*",
-            // "node_modules/**/*",
-            // "@types"
-            "/*"
-          ]
-        }
-      }),
-      environment: {
-        buildImage: codebuild.LinuxBuildImage.STANDARD_4_0
-      }
-    });
+    const lambdaBuild: codebuild.PipelineProject[] = []
+    const lambdaBuildOutput: codepipeline.Artifact[] = []
+    props.apiProps.resources.map(eachResource => {
+      eachResource?.methods?.map(eachMethod => {
+        lambdaBuild.push(new codebuild.PipelineProject(this, "LambdaBuild", {
+          buildSpec: codebuild.BuildSpec.fromObject({
+            version: "0.2",
+            artifacts: {
+              "base-directory": "CdkPipeline/src/lambda/"+eachMethod.folderName,
+              files: [
+                "*"
+              ]
+            }
+          }),
+          environment: {
+            buildImage: codebuild.LinuxBuildImage.STANDARD_4_0
+          }
+        }))
+
+        lambdaBuildOutput.push(new codepipeline.Artifact('LambdaBuildOutput'))
+      })
+    })
 
     // Create Artifacts
     const sourceOutput = new codepipeline.Artifact("SrcOutput");
     const cdkBuildOutput = new codepipeline.Artifact('CdkBuildOutput');
-    const lambdaBuildOutput = new codepipeline.Artifact('LambdaBuildOutput');
+
+    const buildActions: codepipeline_actions.CodeBuildAction[] = []
+    lambdaBuild.map((eachLambdaBuild, index) => {
+      buildActions.push(new codepipeline_actions.CodeBuildAction({
+        actionName: 'Lambda_Build',
+        project: eachLambdaBuild,
+        input: sourceOutput,
+        outputs: [lambdaBuildOutput[index]],
+      }))
+    })
+
+    const parameterOverrides: { [name: string]: any; } = []
+    lambdaBuildOutput.map((eachLambdaBuildOutput, index) => {
+      parameterOverrides.push(props.lambdaCode[index].assign(eachLambdaBuildOutput.s3Location))
+    })
 
     // Complete Pipeline Project
     new codepipeline.Pipeline(this, 'Pipeline', {
@@ -97,12 +107,7 @@ export class PipelineStack extends Stack {
         {
           stageName: 'Build',
           actions: [
-            new codepipeline_actions.CodeBuildAction({
-              actionName: 'Lambda_Build',
-              project: lambdaBuild,
-              input: sourceOutput,
-              outputs: [lambdaBuildOutput],
-            }),
+            ...buildActions,
             new codepipeline_actions.CodeBuildAction({
               actionName: 'CDK_Build',
               project: cdkBuild,
@@ -120,9 +125,8 @@ export class PipelineStack extends Stack {
               stackName: 'LambdaDeploymentStack',
               adminPermissions: true,
               parameterOverrides: {
-                ...props.lambdaCode.assign(lambdaBuildOutput.s3Location)
+                ...parameterOverrides
               },
-              extraInputs: [lambdaBuildOutput],
             }),
           ],
         },

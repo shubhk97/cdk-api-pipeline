@@ -58,6 +58,7 @@ export const applicationProperties: RestApiDefinition = {
       resourceName: "groupPlan",
       methods: [
         {
+          id: 0,
           functionName: "CDK-Test-GroupPlanAPI-groupPlan-POST-py",
           description: "group plan api",
           method: "POST",

@@ -12,6 +12,7 @@ const app = new cdk.App();
 const lambdaStack = new GobasktApiStack(app,applicationProperties.stackName,{apiProps: applicationProperties});
 new PipelineStack(app, 'PipelineStack', {
     lambdaCode: lambdaStack.lambdaCode,
+    apiProps: applicationProperties,
     githubToken: "",
     env: {
       region: "ap-south-1",

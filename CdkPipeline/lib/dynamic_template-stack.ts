@@ -19,11 +19,16 @@ import { gobasktProps } from "./GobasktTemplateTypes";
 
 export class GobasktApiStack extends cdk.Stack {
   api: apigateway.RestApi;
-  public readonly lambdaCode: lambda.CfnParametersCode;
+  public readonly lambdaCode: lambda.CfnParametersCode[];
   apiAuthorizer: apigateway.CfnAuthorizer;
   constructor(scope: cdk.Construct, id: string, props: gobasktProps) {
     super(scope, id, props);
-    this.lambdaCode = lambda.Code.fromCfnParameters();
+    this.lambdaCode = [];
+    props.apiProps.resources.forEach(element => {
+      element.methods?.forEach(eachMethod => {
+        this.lambdaCode.push(lambda.Code.fromCfnParameters())
+      })
+    });
     const apigw = new apigateway.RestApi(this, props.apiProps.apiName, {
       restApiName: props?.apiProps.apiName,
       endpointTypes: [apigateway.EndpointType.EDGE]
@@ -59,6 +64,7 @@ export class GobasktApiStack extends cdk.Stack {
         props.apiProps.resources[i].methods?.forEach(
           (methodDefinition: gobaskt.MethodDefinition) => {
             let lambda = this.getLambda(
+              methodDefinition.id,
               methodDefinition.functionName,
               methodDefinition.runtime,
               methodDefinition.handler,
@@ -141,6 +147,7 @@ export class GobasktApiStack extends cdk.Stack {
   };
 
   getLambda = (
+    id: number,
     functionName: string,
     runtime: lambda.Runtime,
     handler: any,
@@ -150,7 +157,7 @@ export class GobasktApiStack extends cdk.Stack {
       functionName: functionName,
       runtime: runtime,
       handler: handler,
-      code: this.lambdaCode
+      code: this.lambdaCode[id]
     });
   };
 
