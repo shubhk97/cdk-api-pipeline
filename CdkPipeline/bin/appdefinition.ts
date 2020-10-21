@@ -136,7 +136,7 @@ export const applicationProperties: RestApiDefinition = {
     {
       id: 2,
       parent: 1,
-      resourceName: "groupPlan2",
+      resourceName: "groupPlann",
       methods: [
         {
           id: 1,
@@ -148,7 +148,7 @@ export const applicationProperties: RestApiDefinition = {
           handler: "lambda_function.lambda_handler",
           folderName: "CDK-Test-GroupPlanAPI-groupPlan-POST-py2",
           readAccessOnTabels: [],
-          writeAccessOnTables: ["GroupPlan"],
+          writeAccessOnTables: [],
           secured: true,
           request: {
             parameters: [],
@@ -200,7 +200,7 @@ export const applicationProperties: RestApiDefinition = {
                 {
                   contentType: "application/json",
                   description: "test",
-                  modelName: "blank",
+                  modelName: "blank2",
                   schema: {},
                 },
               ],

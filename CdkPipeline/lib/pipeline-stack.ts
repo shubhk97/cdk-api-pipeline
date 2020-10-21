@@ -3,7 +3,7 @@ import * as codepipeline from '@aws-cdk/aws-codepipeline';
 import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
 import * as lambda from '@aws-cdk/aws-lambda';
 import { App, Stack, StackProps, SecretValue } from '@aws-cdk/core';
-import { RestApiDefinition } from '../GobasktCdkCommon/GobasktTemplateTypes';
+import { RestApiDefinition } from './GobasktTemplateTypes';
 
 export interface PipelineStackProps extends StackProps {
   readonly lambdaCode: lambda.CfnParametersCode[];
@@ -49,7 +49,7 @@ export class PipelineStack extends Stack {
     const lambdaBuildOutput: codepipeline.Artifact[] = []
     props.apiProps.resources.map(eachResource => {
       eachResource?.methods?.map(eachMethod => {
-        lambdaBuild.push(new codebuild.PipelineProject(this, "LambdaBuild", {
+        lambdaBuild.push(new codebuild.PipelineProject(this, "LambdaBuild"+eachMethod.id, {
           buildSpec: codebuild.BuildSpec.fromObject({
             version: "0.2",
             artifacts: {
@@ -64,7 +64,7 @@ export class PipelineStack extends Stack {
           }
         }))
 
-        lambdaBuildOutput.push(new codepipeline.Artifact('LambdaBuildOutput'))
+        lambdaBuildOutput.push(new codepipeline.Artifact('LambdaBuild'+eachMethod.id+'Output'))
       })
     })
 
@@ -75,7 +75,7 @@ export class PipelineStack extends Stack {
     const buildActions: codepipeline_actions.CodeBuildAction[] = []
     lambdaBuild.map((eachLambdaBuild, index) => {
       buildActions.push(new codepipeline_actions.CodeBuildAction({
-        actionName: 'Lambda_Build',
+        actionName: 'Lambda_Build'+index,
         project: eachLambdaBuild,
         input: sourceOutput,
         outputs: [lambdaBuildOutput[index]],
@@ -125,7 +125,8 @@ export class PipelineStack extends Stack {
               stackName: 'LambdaDeploymentStack',
               adminPermissions: true,
               parameterOverrides: {
-                ...props.lambdaCode[0].assign(lambdaBuildOutput[0].s3Location)
+                ...props.lambdaCode[0].assign(lambdaBuildOutput[0].s3Location),
+                ...props.lambdaCode[1].assign(lambdaBuildOutput[1].s3Location)
               },
               extraInputs: [...lambdaBuildOutput],
             }),
