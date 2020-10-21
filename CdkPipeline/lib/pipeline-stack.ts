@@ -82,7 +82,7 @@ export class PipelineStack extends Stack {
       }))
     })
 
-    const parameterOverrides: { [name: string]: any; } = []
+    const parameterOverrides = []
     lambdaBuildOutput.map((eachLambdaBuildOutput, index) => {
       parameterOverrides.push(props.lambdaCode[index].assign(eachLambdaBuildOutput.s3Location))
     })
@@ -125,8 +125,9 @@ export class PipelineStack extends Stack {
               stackName: 'LambdaDeploymentStack',
               adminPermissions: true,
               parameterOverrides: {
-                ...parameterOverrides
+                ...props.lambdaCode[0].assign(lambdaBuildOutput[0].s3Location)
               },
+              extraInputs: [...lambdaBuildOutput],
             }),
           ],
         },

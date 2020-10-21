@@ -133,5 +133,85 @@ export const applicationProperties: RestApiDefinition = {
         
       ],
     },
+    {
+      id: 2,
+      parent: 1,
+      resourceName: "groupPlan2",
+      methods: [
+        {
+          id: 1,
+          functionName: "CDK-Test-GroupPlanAPI-groupPlan-POST-py2",
+          description: "group plan api",
+          method: "POST",
+          lambda: "CDK-Test-GroupPlanAPI-groupPlan-POST-py2",
+          runtime: Runtime.PYTHON_3_8,
+          handler: "lambda_function.lambda_handler",
+          folderName: "CDK-Test-GroupPlanAPI-groupPlan-POST-py2",
+          readAccessOnTabels: [],
+          writeAccessOnTables: ["GroupPlan"],
+          secured: true,
+          request: {
+            parameters: [],
+            headers: [],
+            models: [],
+            mappingTemplates: [
+              {
+                contentType: "application/json",
+                template: `{
+                  "applicableItems":$input.json('applicableItems'),
+                  "companyEmailDomain":$input.json('companyEmailDomain'),
+                  "companyName":$input.json('companyName'),
+                  "bpId":$input.json('bpId'),
+                  "discountExceptions":$input.json('discountExceptions'),
+                  "discountType":$input.json('discountType'),
+                  "discountValue":$input.json('discountValue'),
+                  "groupPlanName":$input.json('groupPlanName'),
+                  "groupPlanStatus":$input.json('groupPlanStatus'),
+                  "groupPlanType":$input.json('groupPlanType'),
+                  "contactPersonName":$input.json('contactPersonName'),
+                  "defaultDiscountValidityPeriod":$input.json('defaultDiscountValidityPeriod'),
+                  "contactPersonEmailId":$input.json('contactPersonEmailId'),
+                  "contactPersonPhoneNo":$input.json('contactPersonPhoneNo'),
+                  "defaultDiscountType":$input.json('defaultDiscountType'),
+                  "groupPlanDesc":$input.json('groupPlanDesc'),
+                  "groupSize":$input.json('groupSize'),
+                  "groupStatus":$input.json('groupStatus'),
+                  "planValidityStartDate":$input.json('planValidityStartDate'),
+                  "offerBusinessRule":$input.json('offerBusinessRule'),
+                  "cityCode":$input.json('cityCode')
+                }
+                `,
+              },
+            ],
+            validateRequestParameters: true,
+            validateRequestBody: true,
+          },
+          responses: [
+            {
+              statusCode: "200",
+              headers: [
+                {
+                  name: "Access-Control-Allow-Origin",
+                  value: "'*'",
+                  required: true,
+                },
+              ],
+              models: [
+                {
+                  contentType: "application/json",
+                  description: "test",
+                  modelName: "blank",
+                  schema: {},
+                },
+              ],
+              mappingTemplates: [
+                { contentType: "application/json", template: "" },
+              ],
+            },
+          ],
+        },
+        
+      ],
+    },
   ],
 };
